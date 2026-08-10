@@ -1,0 +1,14 @@
+{
+  "name": "rideflow-workspace",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "preview:frontend": "npm --prefix frontend run preview",
+    "dev:backend": "npm --prefix backend run dev",
+    "start:backend": "npm --prefix backend start",
+    "migrate:ride-dates": "npm --prefix backend run migrate:ride-dates",
+    "migrate:ride-query-fields": "npm --prefix backend run migrate:ride-query-fields"
+  }
+}

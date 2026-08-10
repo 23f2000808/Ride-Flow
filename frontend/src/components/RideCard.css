@@ -1,0 +1,67 @@
+/* ─── FINTECH RIDE CARD ──────────────────────── */
+.ride-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.ride-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--text-light);
+}
+
+.ride-card-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px; position: relative;
+}
+
+/* Timeline Route Graphic */
+.ride-route { display: flex; flex-direction: column; gap: 20px; position: relative; flex: 1; }
+.route-point { display: flex; align-items: flex-start; gap: 16px; position: relative; z-index: 2; }
+.route-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 3px white; }
+.route-dot.pickup { background: var(--primary); box-shadow: 0 0 0 3px #DBEAFE; }
+.route-dot.destination { background: var(--black); }
+
+.route-line {
+  position: absolute; top: 18px; left: 4px; bottom: 18px; width: 2px;
+  background: var(--border-light); z-index: 1;
+}
+
+.route-text { display: flex; flex-direction: column; gap: 2px; }
+.route-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.route-address { font-size: 15px; font-weight: 600; color: var(--text-main); line-height: 1.4; }
+
+/* Status Badges */
+.ride-status {
+  padding: 6px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.badge-green { background: #ECFDF5; color: #10B981; border: 1px solid #A7F3D0; }
+.badge-blue { background: #EFF6FF; color: #3B82F6; border: 1px solid #BFDBFE; }
+.badge-orange { background: #FFFBEB; color: #F59E0B; border: 1px solid #FDE68A; }
+.badge-red { background: #FEF2F2; color: #EF4444; border: 1px solid #FECACA; }
+.badge-purple { background: #F5F3FF; color: #8B5CF6; border: 1px solid #DDD6FE; }
+
+/* Meta Bottom */
+.ride-card-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 20px; border-top: 1px solid var(--border-light);
+}
+
+.ride-meta { display: flex; align-items: center; gap: 16px; }
+.ride-meta-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+}
+.ride-meta-item.price { font-size: 18px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+
+.ride-info-tags { display: flex; gap: 8px; }
+.ride-tag {
+  background: #F8FAFC; color: var(--text-main);
+  padding: 4px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; text-transform: capitalize;
+  border: 1px solid var(--border-light);
+}

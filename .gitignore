@@ -1,0 +1,9 @@
+node_modules/
+.env
+backend-dev.log
+backend/backend-dev.log
+frontend/vite-dev.log
+dist/
+build/
+.next/
+coverage/

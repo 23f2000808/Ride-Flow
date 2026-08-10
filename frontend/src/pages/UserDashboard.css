@@ -1,0 +1,112 @@
+/* ─── FINTECH DASHBOARD ──────────────────────── */
+.user-dashboard-modern {
+  background-color: var(--bg-slate);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ────────── DASHBOARD CONTENT ────────── */
+.dashboard-content-below {
+  padding: 40px 32px 100px;
+  max-width: 1400px; margin: 0 auto;
+}
+
+.dashboard-header-simple {
+  margin-bottom: 32px;
+}
+.dashboard-header-simple h1 { font-size: 28px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+.dashboard-header-simple p { font-size: 15px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+
+/* Stats Grid */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px;
+}
+
+.stat-card-modern {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl); padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+  box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.stat-card-modern:hover {
+  transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--text-light);
+}
+.stat-icon-wrapper {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: #EFF6FF; color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-value { font-size: 32px; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
+
+/* Dashboard Grids */
+.dashboard-grid {
+  display: grid; grid-template-columns: 1fr 380px; gap: 32px;
+}
+.section-head h3 { font-size: 20px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 24px; }
+
+/* Plan Journey Card (replaces hero booking) */
+.plan-journey-card {
+  background: var(--bg-card); border-radius: var(--radius-xl); padding: 32px;
+  box-shadow: var(--shadow-md); border: 1px solid var(--border-light);
+  margin-bottom: 32px;
+}
+.saas-input-wrapper {
+  display: flex; align-items: center; gap: 12px;
+  background: #F8FAFC; padding: 14px 20px; margin-bottom: 16px;
+  border-radius: var(--radius-md); border: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+.saas-input-wrapper:focus-within {
+  background: var(--white); border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+.saas-input-wrapper input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-size: 15px; font-weight: 500; color: var(--text-main);
+}
+.saas-input-wrapper input::placeholder { color: var(--text-muted); }
+
+.saas-btn-prices {
+  width: 100%; height: 52px;
+  background: var(--primary); color: var(--white);
+  border-radius: var(--radius-md); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm); border: none;
+}
+.saas-btn-prices:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 6px rgba(37,99,235,0.2); }
+
+/* Aside Cards */
+.quick-book-card {
+  background: var(--bg-card); border-radius: var(--radius-xl); padding: 24px;
+  box-shadow: var(--shadow-md); border: 1px solid var(--border-light);
+}
+.quick-book-card h4 { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; letter-spacing: -0.5px; }
+
+.saved-loc {
+  display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: var(--radius-md);
+  background: var(--white); border: 1px solid var(--border-light); transition: var(--transition);
+  margin-bottom: 12px; cursor: pointer;
+}
+.saved-loc:hover { background: #F8FAFC; border-color: var(--text-muted); box-shadow: var(--shadow-sm); }
+.loc-icon {
+  width: 44px; height: 44px; border-radius: 10px; background: #EFF6FF; color: var(--primary); 
+  display: flex; align-items: center; justify-content: center;
+}
+
+.promo-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: white;
+  border-radius: var(--radius-xl); padding: 32px; margin-top: 24px;
+  box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+}
+.promo-card h3 { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+.promo-btn { background: white; color: var(--primary); border-radius: var(--radius-md); padding: 12px 24px; font-weight: 700; display: inline-block; transition: var(--transition); }
+.promo-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .dashboard-content-below { padding: 24px; }
+  .stats-grid { grid-template-columns: 1fr; }
+}

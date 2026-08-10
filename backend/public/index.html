@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uber Clone — API Dashboard</title>
+  <meta name="description" content="Interactive API explorer for the Uber Clone ride-sharing backend" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #16161f;
+      --bg-card-hover: #1c1c28;
+      --bg-input: #1a1a26;
+      --border: #2a2a3a;
+      --border-glow: #3b3b55;
+      --text-primary: #e8e8f0;
+      --text-secondary: #8888a0;
+      --text-muted: #555570;
+      --accent-blue: #6366f1;
+      --accent-blue-glow: #818cf8;
+      --accent-green: #22c55e;
+      --accent-green-dim: #16a34a;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --accent-cyan: #06b6d4;
+      --method-get: #22c55e;
+      --method-post: #6366f1;
+      --method-patch: #f59e0b;
+      --method-delete: #ef4444;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BACKGROUND ──────────────────────── */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-glow-1 { top: -200px; right: -100px; background: var(--accent-blue); }
+    .bg-glow-2 { bottom: -200px; left: -100px; background: var(--accent-purple); }
+    .bg-glow-3 { top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--accent-cyan); opacity: 0.05; }
+
+    /* ─── HEADER ───────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(10,10,15,0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(99,102,241,0.3);
+    }
+
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo h1 span { color: var(--accent-blue-glow); }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--accent-green);
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+
+    /* ─── LAYOUT ───────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      min-height: calc(100vh - 73px);
+    }
+
+    /* ─── SIDEBAR ──────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 105px;
+      height: fit-content;
+      max-height: calc(100vh - 130px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-section {
+      margin-bottom: 16px;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      padding: 8px 12px;
+    }
+
+    .endpoint-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .endpoint-btn:hover {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border);
+    }
+
+    .endpoint-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 12px rgba(99,102,241,0.15);
+    }
+
+    .method-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      min-width: 50px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .method-GET { background: rgba(34,197,94,0.15); color: var(--method-get); }
+    .method-POST { background: rgba(99,102,241,0.15); color: var(--method-post); }
+    .method-PATCH { background: rgba(245,158,11,0.15); color: var(--method-patch); }
+    .method-DELETE { background: rgba(239,68,68,0.15); color: var(--method-delete); }
+
+    /* ─── MAIN PANEL ───────────────────────────────── */
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ─── STATS BAR ────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+    .stat-value.blue { color: var(--accent-blue-glow); }
+    .stat-value.green { color: var(--accent-green); }
+    .stat-value.orange { color: var(--accent-orange); }
+    .stat-value.purple { color: var(--accent-purple); }
+
+    /* ─── API TESTER ───────────────────────────────── */
+    .tester-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tester-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tester-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tester-title h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .tester-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .url-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 20px 24px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .url-bar:focus-within {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    .url-method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 14px 16px;
+      border: none;
+      background: rgba(99,102,241,0.1);
+      color: var(--accent-blue-glow);
+      cursor: default;
+      letter-spacing: 0.5px;
+    }
+
+    .url-input {
+      flex: 1;
+      padding: 14px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .send-btn {
+      padding: 10px 24px;
+      margin: 4px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-blue), #4f46e5);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .send-btn:hover {
+      box-shadow: 0 0 20px rgba(99,102,241,0.4);
+      transform: scale(1.02);
+    }
+    .send-btn:active { transform: scale(0.98); }
+    .send-btn.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    /* ─── BODY EDITOR ──────────────────────────────── */
+    .body-section {
+      padding: 0 24px 20px;
+    }
+    .body-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .body-editor {
+      width: 100%;
+      min-height: 180px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .body-editor:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+
+    /* ─── RESPONSE ─────────────────────────────────── */
+    .response-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .response-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .response-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .response-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .response-status {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .response-status.success { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+    .response-status.error { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .response-status.warning { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+
+    .response-time { color: var(--text-muted); padding: 4px 0; }
+
+    .response-body {
+      padding: 20px 24px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .response-body::-webkit-scrollbar { width: 6px; }
+    .response-body::-webkit-scrollbar-track { background: transparent; }
+    .response-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .response-body pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text-secondary);
+    }
+
+    .response-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .response-empty .icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .response-empty p { font-size: 14px; }
+
+    /* JSON Syntax Highlighting */
+    .json-key { color: #818cf8; }
+    .json-string { color: #22c55e; }
+    .json-number { color: #f59e0b; }
+    .json-boolean { color: #f472b6; }
+    .json-null { color: #64748b; }
+    .json-bracket { color: #64748b; }
+
+    /* ─── ANIMATIONS ───────────────────────────────── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeIn 0.3s ease-out; }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .loading-shimmer {
+      background: linear-gradient(90deg, transparent, rgba(99,102,241,0.1), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .sidebar {
+        position: static;
+        max-height: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .sidebar-section { margin-bottom: 8px; }
+      .endpoint-btn { padding: 8px 10px; font-size: 12px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🚗</div>
+        <h1>Uber<span>Clone</span> API</h1>
+      </div>
+      <div class="header-status" id="serverStatus">
+        <div class="status-dot"></div>
+        <span>Checking...</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">🚘 Driver Endpoints</div>
+        <button class="endpoint-btn active" onclick="loadEndpoint(0)" id="ep-0">
+          <span class="method-badge method-POST">POST</span>
+          Create Driver
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(1)" id="ep-1">
+          <span class="method-badge method-GET">GET</span>
+          Find Nearby Drivers
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(2)" id="ep-2">
+          <span class="method-badge method-GET">GET</span>
+          Get Driver by ID
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(3)" id="ep-3">
+          <span class="method-badge method-PATCH">PATCH</span>
+          Update Location
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(4)" id="ep-4">
+          <span class="method-badge method-PATCH">PATCH</span>
+          Toggle Availability
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">🛣️ Ride Endpoints</div>
+        <button class="endpoint-btn" onclick="loadEndpoint(5)" id="ep-5">
+          <span class="method-badge method-POST">POST</span>
+          Create Ride
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(6)" id="ep-6">
+          <span class="method-badge method-GET">GET</span>
+          Get Ride by ID
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(7)" id="ep-7">
+          <span class="method-badge method-PATCH">PATCH</span>
+          Update Ride Status
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(8)" id="ep-8">
+          <span class="method-badge method-PATCH">PATCH</span>
+          Update Ride ($set/$push)
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(9)" id="ep-9">
+          <span class="method-badge method-PATCH">PATCH</span>
+          Rate Ride
+        </button>
+        <button class="endpoint-btn" onclick="loadEndpoint(10)" id="ep-10">
+          <span class="method-badge method-GET">GET</span>
+          Ride History
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-panel">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Endpoints</div>
+          <div class="stat-value blue">11</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Drivers</div>
+          <div class="stat-value green" id="driverCount">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Rides</div>
+          <div class="stat-value orange" id="rideCount">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Mongo Ops</div>
+          <div class="stat-value purple">$set $push $near</div>
+        </div>
+      </div>
+
+      <!-- API Tester -->
+      <div class="tester-card animate-in">
+        <div class="tester-header">
+          <div class="tester-title">
+            <h2 id="endpointTitle">Create Driver</h2>
+          </div>
+          <div class="tester-description" id="endpointDesc">Register a new driver with vehicle info</div>
+        </div>
+
+        <div class="url-bar">
+          <div class="url-method" id="urlMethod">POST</div>
+          <input class="url-input" id="urlInput" type="text" value="/api/drivers" spellcheck="false" />
+          <button class="send-btn" id="sendBtn" onclick="sendRequest()">Send →</button>
+        </div>
+
+        <div class="body-section" id="bodySection">
+          <div class="body-label">Request Body (JSON)</div>
+          <textarea class="body-editor" id="bodyEditor" spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <!-- Response -->
+      <div class="response-card animate-in" id="responseCard">
+        <div class="response-header">
+          <h3>Response</h3>
+          <div class="response-meta" id="responseMeta" style="display:none">
+            <span class="response-status" id="responseStatus"></span>
+            <span class="response-time" id="responseTime"></span>
+          </div>
+        </div>
+        <div class="response-body" id="responseBody">
+          <div class="response-empty">
+            <div class="icon">⚡</div>
+            <p>Click <strong>Send</strong> to make a request</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const BASE = '';
+
+    // ─── ENDPOINT DEFINITIONS ──────────────────────
+    const endpoints = [
+      {
+        method: 'POST', url: '/api/drivers',
+        title: 'Create Driver', desc: 'Register a new driver with vehicle info. Password auto-hashed.',
+        body: JSON.stringify({
+          fullname: { firstname: "Amit", lastname: "Patel" },
+          email: "amit@example.com",
+          password: "securepass123",
+          phone: "+91-9000000001",
+          vehicle: {
+            plate: "MH01XY9999",
+            color: "Silver",
+            vehicleType: "car",
+            model: "Maruti Ertiga",
+            year: 2023,
+            capacity: 6
+          }
+        }, null, 2)
+      },
+      {
+        method: 'GET', url: '/api/drivers/nearby?lng=77.5946&lat=12.9716&radius=10&vehicleType=car',
+        title: 'Find Nearby Drivers', desc: 'Geo query using 2dsphere index + $near operator',
+        body: null
+      },
+      {
+        method: 'GET', url: '/api/drivers/{driverId}',
+        title: 'Get Driver by ID', desc: 'Fetch driver profile by MongoDB ObjectId',
+        body: null
+      },
+      {
+        method: 'PATCH', url: '/api/drivers/{driverId}/location',
+        title: 'Update Driver Location', desc: 'Uses $set to atomically update GPS coordinates',
+        body: JSON.stringify({ lng: 77.6100, lat: 12.9352 }, null, 2)
+      },
+      {
+        method: 'PATCH', url: '/api/drivers/{driverId}/availability',
+        title: 'Toggle Availability', desc: 'Flip driver between online/offline',
+        body: null
+      },
+      {
+        method: 'POST', url: '/api/rides',
+        title: 'Create Ride', desc: 'Creates ride with auto fare calc (Haversine) + OTP generation',
+        body: JSON.stringify({
+          userId: "{userId}",
+          pickup: {
+            address: "MG Road, Bangalore",
+            location: { coordinates: [77.5946, 12.9716] }
+          },
+          destination: {
+            address: "Electronic City, Bangalore",
+            location: { coordinates: [77.6700, 12.8452] }
+          },
+          vehicleType: "car",
+          paymentMethod: "upi",
+          surgePriceMultiplier: 1.0
+        }, null, 2)
+      },
+      {
+        method: 'GET', url: '/api/rides/{rideId}',
+        title: 'Get Ride by ID', desc: 'Fetch ride with populated user & driver details',
+        body: null
+      },
+      {
+        method: 'PATCH', url: '/api/rides/{rideId}/status',
+        title: 'Update Ride Status', desc: 'Lifecycle transitions using $set. Validates state machine.',
+        body: JSON.stringify({
+          status: "accepted",
+          driverId: "{driverId}"
+        }, null, 2)
+      },
+      {
+        method: 'PATCH', url: '/api/rides/{rideId}',
+        title: 'Update Ride ($set + $push)', desc: 'Generic update demonstrating $set and $push operators',
+        body: JSON.stringify({
+          setFields: {
+            "fare.discount": 75,
+            "payment.method": "wallet"
+          },
+          pushFields: {}
+        }, null, 2)
+      },
+      {
+        method: 'PATCH', url: '/api/rides/{rideId}/rate',
+        title: 'Rate Ride', desc: 'Submit rating. Uses $set + recalculates driver rolling average.',
+        body: JSON.stringify({
+          ratedBy: "user",
+          score: 5,
+          review: "Great ride, very smooth!"
+        }, null, 2)
+      },
+      {
+        method: 'GET', url: '/api/rides/user/{userId}?page=1&limit=10',
+        title: 'Ride History', desc: 'Paginated ride history for a user, sorted newest first',
+        body: null
+      }
+    ];
+
+    let currentEndpoint = 0;
+
+    // ─── LOAD ENDPOINT ────────────────────────────
+    function loadEndpoint(index) {
+      currentEndpoint = index;
+      const ep = endpoints[index];
+
+      // Active state
+      document.querySelectorAll('.endpoint-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`ep-${index}`).classList.add('active');
+
+      // Update UI
+      document.getElementById('endpointTitle').textContent = ep.title;
+      document.getElementById('endpointDesc').textContent = ep.desc;
+      document.getElementById('urlMethod').textContent = ep.method;
+      document.getElementById('urlInput').value = ep.url;
+
+      // Method color
+      const methodEl = document.getElementById('urlMethod');
+      methodEl.style.color = `var(--method-${ep.method})`;
+      methodEl.style.background = `rgba(${ep.method === 'GET'?'34,197,94':ep.method==='POST'?'99,102,241':'245,158,11'},0.1)`;
+
+      // Body
+      const bodySection = document.getElementById('bodySection');
+      const bodyEditor = document.getElementById('bodyEditor');
+      if (ep.body) {
+        bodySection.style.display = 'block';
+        bodyEditor.value = ep.body;
+      } else {
+        bodySection.style.display = 'none';
+        bodyEditor.value = '';
+      }
+    }
+
+    // ─── SEND REQUEST ─────────────────────────────
+    async function sendRequest() {
+      const method = document.getElementById('urlMethod').textContent;
+      const url = document.getElementById('urlInput').value;
+      const bodyText = document.getElementById('bodyEditor').value;
+      const sendBtn = document.getElementById('sendBtn');
+
+      sendBtn.textContent = '⏳ Sending...';
+      sendBtn.classList.add('loading');
+
+      const startTime = performance.now();
+
+      try {
+        const options = {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+        };
+
+        if (bodyText && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+          options.body = bodyText;
+        }
+
+        const response = await fetch(BASE + url, options);
+        const elapsed = Math.round(performance.now() - startTime);
+        const data = await response.json();
+
+        showResponse(response.status, elapsed, data);
+      } catch (err) {
+        const elapsed = Math.round(performance.now() - startTime);
+        showResponse(0, elapsed, { error: err.message });
+      } finally {
+        sendBtn.textContent = 'Send →';
+        sendBtn.classList.remove('loading');
+      }
+    }
+
+    // ─── DISPLAY RESPONSE ─────────────────────────
+    function showResponse(status, time, data) {
+      const meta = document.getElementById('responseMeta');
+      const statusEl = document.getElementById('responseStatus');
+      const timeEl = document.getElementById('responseTime');
+      const body = document.getElementById('responseBody');
+
+      meta.style.display = 'flex';
+
+      // Status badge
+      statusEl.textContent = status || 'ERR';
+      statusEl.className = 'response-status';
+      if (status >= 200 && status < 300) statusEl.classList.add('success');
+      else if (status >= 400 && status < 500) statusEl.classList.add('warning');
+      else statusEl.classList.add('error');
+
+      timeEl.textContent = `${time}ms`;
+
+      // Syntax-highlighted JSON
+      body.innerHTML = `<pre>${highlightJSON(JSON.stringify(data, null, 2))}</pre>`;
+      body.classList.add('animate-in');
+
+      // Update stats after mutations
+      if (data.success) fetchStats();
+    }
+
+    // ─── JSON SYNTAX HIGHLIGHTING ─────────────────
+    function highlightJSON(json) {
+      return json
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+        .replace(/: "((?:[^"\\]|\\.)*)"/g, ': <span class="json-string">"$1"</span>')
+        .replace(/: (-?\d+\.?\d*)/g, ': <span class="json-number">$1</span>')
+        .replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>')
+        .replace(/: (null)/g, ': <span class="json-null">$1</span>');
+    }
+
+    // ─── FETCH STATS ──────────────────────────────
+    async function fetchStats() {
+      try {
+        const nearby = await fetch('/api/drivers/nearby?lng=0&lat=0&radius=99999').then(r => r.json()).catch(() => null);
+        // We can approximate counts from nearby query (drivers)
+      } catch (e) {}
+    }
+
+    // ─── SERVER STATUS CHECK ──────────────────────
+    async function checkServer() {
+      const statusEl = document.getElementById('serverStatus');
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        if (data.status === 'ok') {
+          statusEl.innerHTML = '<div class="status-dot"></div><span>Server Online · Port 3000</span>';
+          statusEl.style.background = 'rgba(34,197,94,0.1)';
+          statusEl.style.borderColor = 'rgba(34,197,94,0.2)';
+        }
+      } catch {
+        statusEl.innerHTML = '<span style="color:var(--accent-red)">⚠ Server Offline</span>';
+        statusEl.style.background = 'rgba(239,68,68,0.1)';
+        statusEl.style.borderColor = 'rgba(239,68,68,0.2)';
+      }
+    }
+
+    // ─── KEYBOARD SHORTCUT ────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        sendRequest();
+      }
+    });
+
+    // ─── INIT ─────────────────────────────────────
+    loadEndpoint(0);
+    checkServer();
+    setInterval(checkServer, 15000);
+  </script>
+</body>
+</html>

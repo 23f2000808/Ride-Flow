@@ -1,0 +1,119 @@
+/* ─── FINTECH STRIPE-STYLE LANDING PAGE ──────────────────────── */
+.home-modern {
+  background: var(--bg-slate);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ────────── NAVBAR ────────── */
+.home-nav-modern {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 40px;
+  z-index: 100;
+}
+.home-brand {
+  font-size: 24px; font-weight: 800; letter-spacing: -1px; color: var(--primary); text-decoration: none;
+}
+.home-nav-actions { display: flex; gap: 16px; align-items: center; }
+
+/* ────────── HERO SECTION (Light Clean Layout) ────────── */
+.booking-view-saas {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  position: relative; z-index: 10; padding: 24px;
+}
+
+.booking-saas-container {
+  width: 100%; max-width: 800px; text-align: center; margin-top: -60px; 
+}
+
+/* Dark bold text on light background */
+.booking-saas-title {
+  font-size: 64px; font-weight: 800; color: var(--black);
+  margin-bottom: 24px; letter-spacing: -2px; line-height: 1.1;
+}
+.booking-saas-subtitle {
+  font-size: 18px; color: var(--text-muted); font-weight: 500;
+  max-width: 600px; margin: 0 auto 48px; line-height: 1.5;
+}
+
+/* Crisp White Card */
+.saas-booking-card {
+  background: var(--bg-card); padding: 16px; border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl); border: 1px solid var(--border-light);
+  display: flex; align-items: center; gap: 16px;
+}
+.saas-input-wrapper {
+  flex: 1; display: flex; align-items: center; gap: 12px;
+  background: #F8FAFC; padding: 14px 20px;
+  border-radius: var(--radius-md); border: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+.saas-input-wrapper:focus-within {
+  background: var(--white); border-color: var(--border-focus); box-shadow: var(--shadow-focus);
+}
+.saas-input-wrapper input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-size: 15px; font-weight: 500; color: var(--text-main);
+}
+.saas-input-divider { width: 1px; height: 32px; background: var(--border-light); }
+
+.saas-btn-prices {
+  height: 52px; padding: 0 32px;
+  background: var(--primary); color: var(--white);
+  border-radius: var(--radius-md); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm); border: none;
+}
+.saas-btn-prices:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
+
+.scroll-indicator {
+  position: absolute; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  opacity: 1; transition: opacity 0.5s ease; animation: float 2s ease-in-out infinite; cursor: pointer;
+}
+.scroll-indicator.hidden { opacity: 0; pointer-events: none; }
+@keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(8px); } 100% { transform: translateY(0); } }
+
+/* ────────── STATS SECTION ────────── */
+.stats-section {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 80px 24px; position: relative; z-index: 10;
+}
+.stats-inner {
+  max-width: 1000px; width: 100%;
+}
+.stats-inner h2 {
+  font-size: 32px; font-weight: 800; color: var(--black);
+  margin-bottom: 48px; text-align: center; letter-spacing: -1px;
+}
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+
+.stat-card {
+  background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+  padding: 28px; display: flex; flex-direction: column; gap: 20px;
+  box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--text-light); }
+.stat-icon-wrapper {
+  width: 48px; height: 48px; border-radius: 12px; background: #EFF6FF; color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.stat-info .stat-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.stat-info .stat-value { font-size: 32px; font-weight: 800; color: var(--black); letter-spacing: -1px; }
+
+@media (max-width: 800px) {
+  .home-nav-modern { padding: 20px; }
+  .booking-saas-title { font-size: 44px; padding: 0 12px; }
+  .saas-booking-card { flex-direction: column; padding: 20px; }
+  .saas-input-divider { width: 100%; height: 1px; margin: 8px 0; }
+  .saas-btn-prices { width: 100%; justify-content: center; margin-top: 12px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
