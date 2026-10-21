@@ -2,13 +2,18 @@
   "name": "rideflow-workspace",
   "private": true,
   "scripts": {
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,cyan\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:frontend": "npm --prefix frontend run dev",
     "build:frontend": "npm --prefix frontend run build",
     "lint:frontend": "npm --prefix frontend run lint",
     "preview:frontend": "npm --prefix frontend run preview",
     "dev:backend": "npm --prefix backend run dev",
     "start:backend": "npm --prefix backend start",
+    "seed": "node backend/scripts/seed.js",
     "migrate:ride-dates": "npm --prefix backend run migrate:ride-dates",
     "migrate:ride-query-fields": "npm --prefix backend run migrate:ride-query-fields"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
   }
 }
